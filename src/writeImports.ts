@@ -1,13 +1,15 @@
 import * as vscode from 'vscode';
 import * as options from './options';
-import { NamedImport, TypescriptImport } from './TypescriptImport';
+import { NamedImport, TypescriptImport, TypescriptImportGroup } from './TypescriptImport';
 
-export default function getSortedImportStatements(importClauses: TypescriptImport[]): string {
-    if (importClauses && importClauses.length) {
-        return importClauses
-            .map(getImportClauseString)
-            .join('\n') + '\n';
-    }
+export default function getSortedImportStatements(importGroups: TypescriptImportGroup[]): string {
+    const groups = importGroups.map((group: TypescriptImportGroup) => {
+        return group.imports && group.imports.length
+            ? group.imports.map(getImportClauseString).join('\n')
+            : '';
+    });
+
+    return groups.join('\n\n') + '\n';
 }
 
 function getImportClauseString(importClause: TypescriptImport): string {

@@ -1,15 +1,15 @@
-import * as vscode from 'vscode';
+import { Position, Range, TextDocument, TextEdit } from 'vscode';
 import parseImports from './parseImportNodes';
 import processImports from './processImports';
 import writeImports from './writeImports';
 
-export default function sortImports(document: vscode.TextDocument) {
-    let imports = parseImports(document);
-    imports = processImports(imports);
-    let sortedImportText = writeImports(imports);
+export default function sortImports(document: TextDocument) {
+    let { groups, importRange } = parseImports(document);
+    groups = processImports(groups);
+    let sortedImportText = writeImports(groups);
 
-    let edits: vscode.TextEdit[] = imports.map(importClause => vscode.TextEdit.delete(importClause.range));
-    edits.push(vscode.TextEdit.insert(new vscode.Position(0, 0), sortedImportText));
-
-    return edits;
+    return [
+        TextEdit.delete(importRange),
+        TextEdit.insert(new Position(0, 0), sortedImportText)
+    ];
 }

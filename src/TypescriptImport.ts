@@ -1,4 +1,4 @@
-import * as vscode from 'vscode';
+import { Range } from 'vscode';
 
 export interface NamedImport {
     importName: string;
@@ -9,8 +9,13 @@ export type DestructedImport = NamedImport;
 
 export interface TypescriptImport {
     path: string;
-    range: vscode.Range;
+    range: Range;
     default?: string;
     namedImports?: DestructedImport[];
     namespace?: string;
+}
+
+export interface TypescriptImportGroup {
+    imports: TypescriptImport[];
+    range: Range;
 }

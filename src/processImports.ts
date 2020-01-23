@@ -1,15 +1,20 @@
 import * as options from './options';
-import { TypescriptImport } from './TypescriptImport';
+import { TypescriptImport, TypescriptImportGroup } from './TypescriptImport';
 
-export default function processImports(importClauses: TypescriptImport[]): TypescriptImport[] {
-    return importClauses
-        .map(importClause => {
-            if (importClause.namedImports) {
-                importClause.namedImports.sort((a, b) => a.importName.localeCompare(b.importName, 'en', { sensitivity: 'base' }));
+export default function processImports(importGroups: TypescriptImportGroup[]): TypescriptImportGroup[] {
+    importGroups.forEach((group: TypescriptImportGroup) => {
+        group.imports = group.imports.map((imprt: TypescriptImport) => {
+            if (imprt.namedImports) {
+                imprt.namedImports.sort((a, b) => a.importName.localeCompare(b.importName, 'en', { sensitivity: 'base' }));
             }
-            return importClause;
-        })
-        .sort(compareImportClauses);
+            return imprt;
+        });
+
+        group.imports.sort(compareImportClauses);
+        return group;
+    });
+
+    return importGroups;
 }
 
 function compareImportClauses(a: TypescriptImport, b: TypescriptImport) {
